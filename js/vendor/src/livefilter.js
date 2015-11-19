@@ -141,19 +141,26 @@
     }
 
     Filter.prototype.searchAndFilter = function ( val ) {
-        if (!val) return;
-
+        //if (!val) return;
         var $filter = this,
             resultsCount = 0;
 
-        this.structure.$items.each(function () {
-            if( !$(this).hasClass('disabled') ) {
-                var filters = $(this).attr('data-filter').split('|');
-                var show = $filter.inFilter(val, filters);
-                if (show) resultsCount++;
-                $(this).toggle(!!show);
-            }
-        });
+        if (!val) {
+            this.structure.$items.each(function () {
+                if( !$(this).hasClass('disabled') ) {
+                    $(this).show();
+                }
+            });
+        } else {
+            this.structure.$items.each(function () {
+                if( !$(this).hasClass('disabled') ) {
+                    var filters = $(this).attr('data-filter').split('|');
+                    var show = $filter.inFilter(val, filters);
+                    if (show) resultsCount++;
+                    $(this).toggle(!!show);
+                }
+            });
+        }
 
         if (resultsCount == 0 && val.length != 0) {
             this.structure.$no_results.find('span').text(val);
