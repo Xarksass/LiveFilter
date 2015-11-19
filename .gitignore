@@ -1,0 +1,4 @@
+.idea
+/img/*
+/js/vendor/tabcomplete.min.js
+/css/bootstrap/less/plugins/bootstrap-center-columns/bootstrap-center-columns_bak.less
