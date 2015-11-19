@@ -144,12 +144,6 @@
         this.structure.$items.each(function () {
             var filters = $(this).attr('data-filter').split('|');
             var show = $filter.inFilter(val, filters);
-            /*if (!show) {
-             if (val.slice(-1) === 's' && val.length > 1) {
-             // Try to be smart. Make plural terms singular.
-             show = inFilter(val.slice(0, -1), filter);
-             }
-             }*/
             if (show) resultsCount++;
             $(this).toggle(!!show);
         });
