@@ -58,7 +58,8 @@
     Filter.prototype.getKeywords = function() {
         var keywords = [];
         this.structure.$items.each(function(i) {
-            keywords = keywords.concat($(this).attr('data-filter').split('|'));
+            if( !$(this).hasClass('disabled') )
+                keywords = keywords.concat($(this).attr('data-filter').split('|'));
         });
         return keywords;
     }
@@ -67,39 +68,7 @@
         var $filter = this;
 
         if ($filter.options.autocomplete) {
-            $filter.keywords = $filter.getKeywords();
-
-            if ($filter.keywords != undefined && $filter.keywords != null) {
-
-                // Add tab completion
-                $filter.structure.$input.tabcomplete($filter.keywords, {
-                    hint: $filter.options.hint,
-                    arrowKeys: $filter.options.arrowKeys,
-                    caseSensitive: $filter.options.caseSensitive,
-                    minLength: $filter.options.minLength,
-                    wrapInput: $filter.options.wrapInput
-                });
-
-                if ($filter.options.matches) {
-                    $filter.structure.$input
-                        .on(
-                            "match",
-                            function(e, num) {
-                                $filter.structure.$matches.css("opacity", (num == 0 ? 0 : 1)).find("span").html(num);
-                            }
-                        )
-                        .on(
-                            "blur",
-                            function() {
-                                $filter.structure.$matches.css("opacity", 0);
-                            }
-                        );
-                }
-            }
-            else
-            {
-                console.log('no keywords defined!');
-            }
+            $filter.initAC();
         }
 
         if ($filter.options.clearbtn) {
@@ -115,7 +84,6 @@
             if ($filter.options.clearbtn)
                 $filter.structure.$clear.toggleClass('hide', !val).prev('span').toggle(!val);
 
-            $filter.structure.$items.toggle(!val);
             $filter.structure.$no_results.hide(); // Hide no results msg
 
             $filter.searchAndFilter(val);
@@ -135,6 +103,43 @@
         }
     }
 
+    Filter.prototype.initAC = function () {
+        var $filter = this;
+        $filter.keywords = $filter.getKeywords();
+
+        if ($filter.keywords != undefined && $filter.keywords != null) {
+
+            // Add tab completion
+            $filter.structure.$input.tabcomplete($filter.keywords, {
+                hint: $filter.options.hint,
+                arrowKeys: $filter.options.arrowKeys,
+                caseSensitive: $filter.options.caseSensitive,
+                minLength: $filter.options.minLength,
+                wrapInput: $filter.options.wrapInput
+            });
+
+            if ($filter.options.matches) {
+                $filter.structure.$input
+                    .on(
+                        "match",
+                        function(e, num) {
+                            $filter.structure.$matches.css("opacity", (num == 0 ? 0 : 1)).find("span").html(num);
+                        }
+                    )
+                    .on(
+                        "blur",
+                        function() {
+                            $filter.structure.$matches.css("opacity", 0);
+                        }
+                    );
+            }
+        }
+        else
+        {
+            console.log('no keywords defined!');
+        }
+    }
+
     Filter.prototype.searchAndFilter = function ( val ) {
         if (!val) return;
 
@@ -142,10 +147,12 @@
             resultsCount = 0;
 
         this.structure.$items.each(function () {
-            var filters = $(this).attr('data-filter').split('|');
-            var show = $filter.inFilter(val, filters);
-            if (show) resultsCount++;
-            $(this).toggle(!!show);
+            if( !$(this).hasClass('disabled') ) {
+                var filters = $(this).attr('data-filter').split('|');
+                var show = $filter.inFilter(val, filters);
+                if (show) resultsCount++;
+                $(this).toggle(!!show);
+            }
         });
 
         if (resultsCount == 0 && val.length != 0) {
@@ -160,8 +167,7 @@
         this.structure.$input
             .val('')
             .trigger('input')
-            .trigger('keyup')
-            .focus();
+            .trigger('keyup');
 
         this.structure.$clear.addClass('hide'); // Hide clear button
     }
