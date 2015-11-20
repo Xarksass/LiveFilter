@@ -187,6 +187,8 @@
         return false;
     }
 
+    //Todo Select on enter key
+
     // FILTER PLUGIN DEFINITION
     // ==============================
 
