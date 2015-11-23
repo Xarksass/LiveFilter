@@ -18,10 +18,11 @@
         this.init()
     }
 
-    Filter.VERSION  = '2.0.0'
+    Filter.VERSION  = '2.1.0'
 
     Filter.DEFAULTS = {
         clearbtn : false,
+        textinfo : true,
         autocomplete : false,   // Allow auto-completion
         hint: "placeholder",    // "placeholder", "select", false
         arrowKeys: false,       // Allow the use of <up> and <down> keys to iterate
@@ -37,6 +38,8 @@
             $filter     : $('.list-to-filter',this.$element),
             $clear      : $('.filter-clear', this.$element),
             $no_results : $('.no-search-results', this.$element),
+            $info        : $('.filter-info', this.$element),
+            $val        : $('.filter-val', this.$element),
             $items      : $('.filter-item', this.$element),
             $matches    : $('.matches', this.$element)
         }
@@ -45,6 +48,7 @@
     Filter.prototype.defaults = function() {
         return {
             clearbtn        : this.$element.attr('data-clear') || Filter.DEFAULTS.clearbtn,
+            textinfo        : this.$element.attr('data-textinfo') || Filter.DEFAULTS.textinfo,
             autocomplete    : this.$element.attr('data-autocomplete') || Filter.DEFAULTS.autocomplete,
             hint            : this.$element.attr('data-hint') || Filter.DEFAULTS.hint,
             arrowKeys       : this.$element.attr('data-keys') || Filter.DEFAULTS.arrowKeys,
@@ -81,12 +85,26 @@
         $filter.structure.$input.on('keyup', function() {
             var val = $(this).val().toLowerCase();
 
+            $filter.structure.$val.text(val);
+
             if ($filter.options.clearbtn)
                 $filter.structure.$clear.toggleClass('hide', !val).prev('span').toggle(!val);
 
-            $filter.structure.$no_results.hide(); // Hide no results msg
+            var resultsCount = $filter.searchAndFilter(val);
 
-            $filter.searchAndFilter(val);
+            if ( resultsCount == 0 && val.length != 0) {
+                $filter.structure.$no_results.show();
+            } else {
+                $filter.structure.$no_results.hide();
+            }
+
+            if ($filter.options.textinfo) {
+                if( (val.length == 0 || val == '') || resultsCount == 0) {
+                    $filter.structure.$info.hide();
+                } else {
+                    $filter.structure.$info.show();
+                }
+            }
         });
 
         $filter.structure.$input
@@ -96,6 +114,10 @@
 
         if ($filter.structure.$clear && $filter.options.clearbtn) {
             $filter.structure.$clear.addClass('hide').prev('span').show(); // Hide clear button
+        }
+
+        if ($filter.structure.$info) {
+            $filter.structure.$info.hide(); // Hide no resutls msg
         }
 
         if ($filter.structure.$no_results) {
@@ -141,7 +163,6 @@
     }
 
     Filter.prototype.searchAndFilter = function ( val ) {
-        //if (!val) return;
         var $filter = this,
             resultsCount = 0;
 
@@ -162,12 +183,7 @@
             });
         }
 
-        if (resultsCount == 0 && val.length != 0) {
-            this.structure.$no_results.find('span').text(val);
-            this.structure.$no_results.show();
-        } else {
-            this.structure.$no_results.hide();
-        }
+        return resultsCount;
     }
 
     Filter.prototype.clear = function() {
