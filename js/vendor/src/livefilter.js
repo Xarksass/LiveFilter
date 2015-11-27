@@ -208,14 +208,26 @@
     // FILTER PLUGIN DEFINITION
     // ==============================
 
-    function Plugin(option) {
+    function Plugin() {
+        var arg = arguments;
         return this.each(function () {
-            var $this   = $(this);
-            var data    = $this.data('liveFilter');
-            var options = typeof option == 'object' && option;
+            var $this   = $(this),
+                data    = $this.data('liveFilter'),
+                method  = arg[0];
 
-            if (!data) $this.data('liveFilter', (data = new Filter(this, options)));
-            if (typeof option == 'string' && data[option]) data[option]()
+            if( typeof(method) == 'object' || !method ) {
+                var options = typeof method == 'object' && method;
+                $this.data('liveFilter', (data = new Filter(this, options)));
+            } else {
+                if (data[method]) {
+                    method = data[method];
+                    arg = Array.prototype.slice.call(arg, 1);
+                    if(arg != null || arg != undefined || arg != [])  method.apply(data, arg);
+                } else {
+                    $.error( 'Method ' +  method + ' does not exist on jQuery.Filter' );
+                    return this;
+                }
+            }
         })
     }
 
