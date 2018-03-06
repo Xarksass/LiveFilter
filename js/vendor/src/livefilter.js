@@ -52,7 +52,7 @@
             autocomplete    : this.$element.attr('data-autocomplete') || Filter.DEFAULTS.autocomplete,
             hint            : this.$element.attr('data-hint') || Filter.DEFAULTS.hint,
             arrowKeys       : this.$element.attr('data-keys') || Filter.DEFAULTS.arrowKeys,
-            matches         : this.$element.attr('data-matches') || Filter.DEFAULTS.arrowKeys,
+            matches         : this.$element.attr('data-matches') || Filter.DEFAULTS.matches,
             caseSensitive   : Filter.DEFAULTS.caseSensitive,
             minLength       : Filter.DEFAULTS.minLength,
             wrapInput       : Filter.DEFAULTS.wrapInput
