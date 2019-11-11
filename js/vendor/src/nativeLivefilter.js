@@ -42,7 +42,7 @@ class liveFilter {
         };
         this.options = Object.assign({}, this.parseData(), options);
         this.structure = Object.assign({}, this.parts());
-        this.element.filterList = this;
+        this.element.liveFilter = this;
         this.keywords = null;
         this.init();
     }
