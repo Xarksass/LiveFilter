@@ -1,9 +1,9 @@
 # LiveFilter
 ## Description
-A jQuery plugin to provide a live filter on a list.
+A lightweight script to provide a live filter on a list.
 
 ## Requirements
-Need [tabcomplete](https://github.com/erming/tabcomplete) for the auto-complete feature
+Need [tabcomplete](https://github.com/xarksass/tabcomplete) for the auto-complete feature
 
 ## Basic usage
 This is the basic html structure needed to use this plugin
